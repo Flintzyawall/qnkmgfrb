@@ -1,0 +1,802 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no, viewport-fit=cover">
+  <title>для тебя 💕 | полевые цветы</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    body {
+      min-height: 100vh;
+      background: linear-gradient(135deg, #ffe9f0 0%, #ffe0ea 100%);
+      font-family: 'Segoe UI', 'Quicksand', -apple-system, 'Comic Neue', 'Nunito', system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 16px;
+      position: relative;
+      overflow-x: hidden;
+      touch-action: pan-y pinch-zoom; /* сохраняем прокрутку, но кнопки работают */
+    }
+
+    /* плавающие сердечки — адаптив */
+    .floating-hearts {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    .heart-bg {
+      position: absolute;
+      color: rgba(255, 130, 160, 0.3);
+      font-size: 1.5rem;
+      animation: floatUp 10s linear infinite;
+      user-select: none;
+      will-change: transform;
+    }
+
+    @keyframes floatUp {
+      0% {
+        transform: translateY(100vh) rotate(0deg);
+        opacity: 0.5;
+      }
+      100% {
+        transform: translateY(-20vh) rotate(360deg);
+        opacity: 0;
+      }
+    }
+
+    /* главная карточка — идеально для мобильных */
+    .card {
+      position: relative;
+      z-index: 10;
+      max-width: 550px;
+      width: 100%;
+      background: rgba(255, 250, 252, 0.96);
+      backdrop-filter: blur(2px);
+      border-radius: 48px;
+      box-shadow: 0 20px 40px rgba(255, 100, 130, 0.2), 0 5px 12px rgba(0, 0, 0, 0.05);
+      padding: 24px 20px 28px;
+      text-align: center;
+      border: 1px solid rgba(255, 200, 215, 0.6);
+      transition: transform 0.2s ease;
+    }
+
+    .avatar {
+      width: 100px;
+      height: 100px;
+      background: #ffe2ec;
+      border-radius: 50%;
+      margin: 0 auto 12px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 3.8rem;
+      box-shadow: 0 10px 20px rgba(255, 120, 140, 0.2), 0 0 0 4px white, 0 0 0 7px #ffbfcf;
+      transition: transform 0.1s ease;
+      cursor: pointer;
+      touch-action: manipulation;
+    }
+
+    .avatar:active {
+      transform: scale(0.96);
+    }
+
+    h1 {
+      font-size: 1.7rem;
+      font-weight: 600;
+      color: #d44c6f;
+      margin-bottom: 6px;
+      letter-spacing: -0.3px;
+      word-break: keep-all;
+    }
+
+    .subtitle {
+      color: #f28aa8;
+      font-size: 0.85rem;
+      background: #fff0f5;
+      display: inline-block;
+      padding: 4px 14px;
+      border-radius: 30px;
+      margin-bottom: 18px;
+      font-weight: 500;
+    }
+
+    /* сообщение */
+    .message-card {
+      background: #fff5f8;
+      border-radius: 35px;
+      padding: 16px 14px;
+      margin: 10px 0 18px;
+      border: 1px solid #ffe0e8;
+    }
+
+    .greeting {
+      font-size: 1.15rem;
+      font-weight: 600;
+      color: #c44568;
+      margin-bottom: 10px;
+    }
+
+    .main-message {
+      font-size: 0.95rem;
+      line-height: 1.45;
+      color: #6b4a56;
+      background: white;
+      padding: 14px 12px;
+      border-radius: 28px;
+      font-weight: 500;
+      min-height: 80px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      word-break: break-word;
+    }
+
+    /* кнопки — увеличенная область касания */
+    .buttons {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 12px;
+      margin: 16px 0 14px;
+    }
+
+    .btn {
+      background: white;
+      border: none;
+      padding: 12px 20px;
+      border-radius: 60px;
+      font-size: 0.9rem;
+      font-weight: 600;
+      color: #dd6b8b;
+      cursor: pointer;
+      transition: 0.08s linear;
+      box-shadow: 0 3px 0 #ffbfcf;
+      font-family: inherit;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      flex: 0 1 auto;
+      touch-action: manipulation;
+      -webkit-touch-callout: none;
+      user-select: none;
+    }
+
+    .btn:active {
+      transform: translateY(2px);
+      box-shadow: 0 1px 0 #ffbfcf;
+    }
+
+    .btn-pink {
+      background: #ffe4ed;
+      color: #c13e60;
+      box-shadow: 0 3px 0 #eaa5bc;
+    }
+
+    /* комплименты */
+    .compliments-box {
+      background: #fff0f5;
+      border-radius: 32px;
+      padding: 12px 14px;
+      margin: 12px 0;
+    }
+
+    .counter {
+      font-size: 0.75rem;
+      color: #f48fb1;
+      background: rgba(255,255,240,0.9);
+      display: inline-block;
+      padding: 4px 12px;
+      border-radius: 50px;
+      margin-bottom: 10px;
+    }
+
+    .compliment-text {
+      background: white;
+      padding: 12px;
+      border-radius: 28px;
+      color: #9a5e6e;
+      font-size: 0.9rem;
+      font-weight: 500;
+      transition: 0.1s;
+      word-break: break-word;
+    }
+
+    /* кликабельное сердечко — увеличенная зона */
+    .heart-clicker {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      background: #ffe6ef;
+      padding: 10px 20px;
+      border-radius: 60px;
+      margin: 12px 0 8px;
+      cursor: pointer;
+      transition: 0.08s linear;
+      width: auto;
+      flex-wrap: wrap;
+      touch-action: manipulation;
+      -webkit-tap-highlight-color: transparent;
+      user-select: none;
+    }
+
+    .heart-clicker:active {
+      transform: scale(0.97);
+      background: #ffe0ea;
+    }
+
+    .heart-clicker span:first-child {
+      font-size: 1.8rem;
+    }
+
+    .heart-count {
+      font-weight: bold;
+      font-size: 1.2rem;
+      color: #ff6b8f;
+      min-width: 32px;
+    }
+
+    footer {
+      margin-top: 18px;
+      font-size: 0.65rem;
+      color: #f5a5bd;
+    }
+
+    /* галерея полевых цветов — красивое всплывающее окно */
+    .flowers-modal {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0,0,0,0.7);
+      backdrop-filter: blur(8px);
+      z-index: 2000;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      visibility: hidden;
+      opacity: 0;
+      transition: visibility 0.2s, opacity 0.25s ease;
+      padding: 20px;
+    }
+    .flowers-modal.active {
+      visibility: visible;
+      opacity: 1;
+    }
+    .flowers-gallery {
+      background: #fffafc;
+      max-width: 480px;
+      width: 90%;
+      border-radius: 48px;
+      padding: 20px 18px 24px;
+      text-align: center;
+      box-shadow: 0 25px 40px rgba(0,0,0,0.2);
+      border: 1px solid #ffccd9;
+      animation: softAppear 0.25s ease;
+    }
+    @keyframes softAppear {
+      from { transform: scale(0.96); opacity: 0; }
+      to { transform: scale(1); opacity: 1; }
+    }
+    .flowers-gallery h3 {
+      font-size: 1.6rem;
+      color: #d44c6f;
+      margin-bottom: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+    }
+    .flower-grid {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 14px;
+      justify-content: center;
+      margin: 20px 0;
+    }
+    .flower-card {
+      background: #fff5f8;
+      border-radius: 32px;
+      padding: 12px 10px;
+      width: 130px;
+      text-align: center;
+      transition: 0.1s;
+      border: 1px solid #ffe0e8;
+    }
+    .flower-emoji {
+      font-size: 3.5rem;
+      display: block;
+      margin-bottom: 8px;
+    }
+    .flower-name {
+      font-size: 0.8rem;
+      font-weight: 600;
+      color: #b45a74;
+    }
+    .flower-desc {
+      font-size: 0.7rem;
+      color: #f28aa8;
+    }
+    .close-flowers {
+      background: #ffe4ed;
+      border: none;
+      padding: 10px 24px;
+      border-radius: 40px;
+      font-size: 0.9rem;
+      font-weight: 600;
+      color: #c13e60;
+      margin-top: 8px;
+      cursor: pointer;
+      font-family: inherit;
+      touch-action: manipulation;
+    }
+    .close-flowers:active {
+      transform: scale(0.97);
+    }
+    .mini-flower-icon {
+      display: inline-block;
+      animation: sway 1.5s infinite;
+    }
+    @keyframes sway {
+      0% { transform: rotate(0deg);}
+      50% { transform: rotate(6deg);}
+      100% { transform: rotate(0deg);}
+    }
+    /* адаптив для маленьких экранов */
+    @media (max-width: 480px) {
+      body {
+        padding: 12px;
+      }
+      .card {
+        padding: 18px 16px 22px;
+        border-radius: 40px;
+      }
+      h1 {
+        font-size: 1.45rem;
+      }
+      .avatar {
+        width: 85px;
+        height: 85px;
+        font-size: 3.2rem;
+      }
+      .btn {
+        padding: 10px 16px;
+        font-size: 0.8rem;
+      }
+      .heart-clicker {
+        padding: 8px 16px;
+        gap: 6px;
+      }
+      .heart-clicker span:first-child {
+        font-size: 1.5rem;
+      }
+      .flower-card {
+        width: 110px;
+      }
+      .flower-emoji {
+        font-size: 2.8rem;
+      }
+    }
+    @media (max-width: 380px) {
+      .buttons {
+        gap: 8px;
+      }
+      .btn {
+        padding: 8px 12px;
+        font-size: 0.75rem;
+      }
+      .flower-card {
+        width: 95px;
+      }
+    }
+  </style>
+</head>
+<body>
+
+<div class="floating-hearts" id="heartsContainer"></div>
+
+<div class="card">
+  <div class="avatar" id="avatarClick">
+    🧸💗
+  </div>
+  <h1>для тебя, моя хорошая</h1>
+  <div class="subtitle">🌷 просто так, потому что ты есть 🌷</div>
+
+  <div class="message-card">
+    <div class="greeting">
+      <span>привет, катёнак ☀️</span>
+    </div>
+    <div class="main-message" id="mainMessage">
+      захотел сделать тебе что-то милое. надеюсь, тебе понравится 💕
+    </div>
+  </div>
+
+  <div class="buttons">
+    <button class="btn" id="warmBtn">✨ сказать что-то тёплое</button>
+    <button class="btn btn-pink" id="surpriseBtn">🎀 сюрпризик</button>
+  </div>
+
+  <div class="compliments-box">
+    <div class="counter" id="counterDisplay">💭 комплиментов: 0</div>
+    <div class="compliment-text" id="complimentField">
+      нажми на кнопку, я буду говорить тебе приятности 💖
+    </div>
+  </div>
+
+  <div class="heart-clicker" id="heartZone">
+    <span>💗</span>
+    <span class="heart-label">нажми, если хочешь получить ещё немного тепла</span>
+    <span class="heart-count" id="heartNumber">0</span>
+    <span>💗</span>
+  </div>
+
+  <footer>
+    просто для тебя ✨
+  </footer>
+</div>
+
+<!-- модалка с полевыми цветами (красивые картинки-эмодзи с нежным дизайном) -->
+<div id="flowersModal" class="flowers-modal">
+  <div class="flowers-gallery">
+    <h3>🌼 полевые цветы 🌻<span class="mini-flower-icon">🌸</span></h3>
+    <div class="flower-grid">
+      <div class="flower-card">
+        <span class="flower-emoji">🌾💜</span>
+        <div class="flower-name">Васильки</div>
+        <div class="flower-desc">нежные, как твои глаза</div>
+      </div>
+      <div class="flower-card">
+        <span class="flower-emoji">🌼✨</span>
+        <div class="flower-name">Ромашки</div>
+        <div class="flower-desc">чистые и искренние</div>
+      </div>
+      <div class="flower-card">
+        <span class="flower-emoji">🌺💗</span>
+        <div class="flower-name">Мак</div>
+        <div class="flower-desc">яркий, как твоя улыбка</div>
+      </div>
+      <div class="flower-card">
+        <span class="flower-emoji">🌻🧡</span>
+        <div class="flower-name">Подсолнухи</div>
+        <div class="flower-desc">тянутся к солнышку, как я к тебе</div>
+      </div>
+    </div>
+    <button class="close-flowers" id="closeFlowersBtn">💐 спасибо, очень красиво</button>
+  </div>
+</div>
+
+<script>
+  // ----- тёплые фразы и сюрпризы с цветами -----
+  const warmPhrases = [
+    "ты сегодня особенно красивая. хотя ты всегда красивая, просто сегодня я заметил ещё раз 💕",
+    "у тебя самая милая улыбка. когда ты улыбаешься, у меня настроение становится лучше (но мало вижу твоих улыбок(((() 🥺",
+    "я тут вспоминал, как мы проводили время вместе рядом и сам не заметил, как улыбнулся. ты на меня так действуешь 💗",
+    "просто хочу, чтобы ты знала: ты самая лучшая. серьёзно. 🌸",
+    "мне нравится, как ты смеёшься. и как показываешь свой язычок 🥹",
+    "ты будто солнышко 🌞",
+    "твои глаза... я могу смотреть на них вечно. они прекрасны 👀💖",
+    "ты делаешь мои дни лучше. даже когда мы просто переписываемся 💬💕",
+    "надеюсь, у тебя всё хорошо. я всегда рядом если что 🤍",
+    "ты особенная. правда. не знаю, как это объяснить, но это так 🧸💗"
+  ];
+
+  const surprisePhrasesRaw = [
+    "🎈 сюрприз! представь, что я передаю тебе вкусную нарезку фруктов 🍪☕",
+    "🎀 бум! виртуальный букетик полевых цветов. они такие же нежные, как ты (а потом и реальных) 🌼✨",
+    "🐱 тут должен быть смешной котик, который говорит 'ты крутая!' (мяу!) 🐱💖",
+    "⭐ загадай желание. я очень хочу, чтобы оно сбылось! 🤞✨",
+    "🍬 сюрприз-сюрприз! это сладкая конфетка для твоего настроения (а потом и реальную конфетку) 🍭💕",
+    "🫂 обнимашки! виртуальные, но безумно крепкие и нежные 🤗💖",
+    "🌟 маленькая звёздочка упала и шепнула, что ты самая лучшая. я с ней согласен ✨"
+  ];
+
+  const flowerTriggerPhrase = "виртуальный букетик полевых цветов";
+
+  const heartMessages = [
+    "❤️ ты классная, запомни это",
+    "💕 ещё одно сердечко для тебя",
+    "💗 знаешь, ты очень милая",
+    "💖 спасибо, что нажала сюда 🥺",
+    "💓 я рад, что ты здесь",
+    "💘 мне нравится с тобой общаться",
+    "💞 просто чтобы ты улыбнулась"
+  ];
+
+  let complimentCount = 0;
+  let heartClicks = 0;
+
+  const mainMessageDiv = document.getElementById('mainMessage');
+  const complimentField = document.getElementById('complimentField');
+  const counterDisplay = document.getElementById('counterDisplay');
+  const heartNumberSpan = document.getElementById('heartNumber');
+  const warmBtn = document.getElementById('warmBtn');
+  const surpriseBtn = document.getElementById('surpriseBtn');
+  const heartZone = document.getElementById('heartZone');
+  const avatar = document.getElementById('avatarClick');
+  const flowersModal = document.getElementById('flowersModal');
+  const closeFlowersBtn = document.getElementById('closeFlowersBtn');
+
+  let isFlowerModalOpen = false;
+  let touchDebounce = false; // защита от дублирования быстрых касаний
+
+  function safeExecute(fn) {
+    if (touchDebounce) return;
+    touchDebounce = true;
+    fn();
+    setTimeout(() => { touchDebounce = false; }, 200);
+  }
+
+  function updateCounter() {
+    counterDisplay.innerText = `💭 комплиментов: ${complimentCount}`;
+  }
+
+  function addCompliment(text) {
+    complimentField.innerHTML = text;
+    complimentCount++;
+    updateCounter();
+    complimentField.style.transform = 'scale(1.01)';
+    setTimeout(() => { complimentField.style.transform = 'scale(1)'; }, 150);
+  }
+
+  function showFlowerGallery() {
+    if (isFlowerModalOpen) return;
+    isFlowerModalOpen = true;
+    flowersModal.classList.add('active');
+    if (window.navigator && window.navigator.vibrate) window.navigator.vibrate(30);
+  }
+
+  function closeFlowerModal() {
+    flowersModal.classList.remove('active');
+    isFlowerModalOpen = false;
+  }
+
+  function createMiniFlowerRain() {
+    const flowersEmojis = ['🌸','🌼','🌻','🌺','💐','🌷','🌾'];
+    for (let i = 0; i < 22; i++) {
+      const flowerEl = document.createElement('div');
+      flowerEl.innerText = flowersEmojis[Math.floor(Math.random() * flowersEmojis.length)];
+      flowerEl.style.position = 'fixed';
+      flowerEl.style.left = Math.random() * window.innerWidth + 'px';
+      flowerEl.style.top = '-20px';
+      flowerEl.style.fontSize = 1.2 + Math.random() * 1.2 + 'rem';
+      flowerEl.style.zIndex = '9999';
+      flowerEl.style.pointerEvents = 'none';
+      flowerEl.style.opacity = '0.8';
+      flowerEl.style.filter = 'drop-shadow(0 2px 4px rgba(0,0,0,0.1))';
+      document.body.appendChild(flowerEl);
+      const duration = 1200 + Math.random() * 1500;
+      const anim = flowerEl.animate([
+        { transform: 'translateY(0px) rotate(0deg)', opacity: 0.9 },
+        { transform: `translateY(${window.innerHeight + 50}px) rotate(${Math.random() * 360}deg)`, opacity: 0 }
+      ], { duration: duration, easing: 'cubic-bezier(0.2, 0.9, 0.4, 1)' });
+      anim.onfinish = () => flowerEl.remove();
+    }
+  }
+
+  function showSurprise() {
+    safeExecute(() => {
+      const randomIndex = Math.floor(Math.random() * surprisePhrasesRaw.length);
+      let surprise = surprisePhrasesRaw[randomIndex];
+      const isFlowerSurprise = surprise.toLowerCase().includes(flowerTriggerPhrase.toLowerCase());
+      
+      mainMessageDiv.innerHTML = `🎀 ${surprise} 🎀`;
+      addCompliment(`🎁 сюрприз: ${surprise} 💕`);
+      createMiniConfetti();
+      
+      if (isFlowerSurprise) {
+        setTimeout(() => {
+          showFlowerGallery();
+          createMiniFlowerRain();
+          addCompliment(`🌼✨ посмотри, какие цветы для тебя! (нажми на сюрприз ещё раз, чтобы снова увидеть букетик) ✨🌻`);
+        }, 150);
+      }
+    });
+  }
+
+  function showWarmMessage() {
+    safeExecute(() => {
+      const randomIndex = Math.floor(Math.random() * warmPhrases.length);
+      const phrase = warmPhrases[randomIndex];
+      mainMessageDiv.innerHTML = `💗 ${phrase} 💗`;
+      addCompliment(`✨ ${phrase} ✨`);
+    });
+  }
+
+  function onHeartClick() {
+    safeExecute(() => {
+      heartClicks++;
+      heartNumberSpan.innerText = heartClicks;
+      
+      if (heartClicks % 3 === 0) {
+        const specialMsg = heartMessages[Math.floor(Math.random() * heartMessages.length)];
+        addCompliment(`💗 ${specialMsg} (уже ${heartClicks} раз нажала 🥺) 💗`);
+      } else {
+        const randomMsg = heartMessages[Math.floor(Math.random() * heartMessages.length)];
+        showFloatingTip(randomMsg);
+      }
+      const heartIcon = heartZone.querySelector('span:first-child');
+      if (heartIcon) {
+        heartIcon.style.transform = 'scale(1.3)';
+        setTimeout(() => { heartIcon.style.transform = 'scale(1)'; }, 150);
+      }
+    });
+  }
+
+  function showFloatingTip(text) {
+    const tip = document.createElement('div');
+    tip.innerText = text;
+    tip.style.position = 'fixed';
+    tip.style.bottom = '28%';
+    tip.style.left = '50%';
+    tip.style.transform = 'translateX(-50%)';
+    tip.style.backgroundColor = '#ffeef4';
+    tip.style.color = '#c44568';
+    tip.style.padding = '8px 20px';
+    tip.style.borderRadius = '40px';
+    tip.style.fontSize = '0.8rem';
+    tip.style.fontWeight = '500';
+    tip.style.boxShadow = '0 6px 18px rgba(0,0,0,0.1)';
+    tip.style.border = '1px solid #ffbfcf';
+    tip.style.zIndex = '1000';
+    tip.style.whiteSpace = 'nowrap';
+    tip.style.fontFamily = 'inherit';
+    tip.style.pointerEvents = 'none';
+    tip.style.backdropFilter = 'blur(6px)';
+    tip.style.maxWidth = '85vw';
+    tip.style.whiteSpace = 'normal';
+    tip.style.textAlign = 'center';
+    document.body.appendChild(tip);
+    setTimeout(() => {
+      tip.style.opacity = '0';
+      tip.style.transition = '0.3s';
+      setTimeout(() => tip.remove(), 400);
+    }, 1300);
+  }
+
+  function createMiniConfetti() {
+    const colors = ['#ffb7c5', '#ff9aae', '#ffd1dc', '#ff85a1', '#fec8d8'];
+    for (let i = 0; i < 30; i++) {
+      const conf = document.createElement('div');
+      conf.style.position = 'fixed';
+      conf.style.width = '7px';
+      conf.style.height = '7px';
+      conf.style.backgroundColor = colors[Math.floor(Math.random() * colors.length)];
+      conf.style.borderRadius = Math.random() > 0.6 ? '50%' : '2px';
+      conf.style.left = Math.random() * window.innerWidth + 'px';
+      conf.style.top = '-10px';
+      conf.style.zIndex = '9999';
+      conf.style.pointerEvents = 'none';
+      conf.style.opacity = '0.8';
+      document.body.appendChild(conf);
+      const duration = 700 + Math.random() * 900;
+      const anim = conf.animate([
+        { transform: 'translateY(0px) rotate(0deg)', opacity: 0.9 },
+        { transform: `translateY(${window.innerHeight + 40}px) rotate(${Math.random() * 500}deg)`, opacity: 0 }
+      ], { duration: duration, easing: 'ease-out' });
+      anim.onfinish = () => conf.remove();
+    }
+  }
+
+  function avatarSecret() {
+    safeExecute(() => {
+      const secrets = [
+        "🐣 ты такая милая! (это секретная фраза)",
+        "🌈 обнимаю тебя! надеюсь, у тебя хорошее настроение 💖",
+        "🦋 знаешь, мне очень нравится с тобой общаться. правда-правда",
+        "🍰 твоя ава в тг тебя описывает идеально, ты такой же миленький котик ✨"
+      ];
+      const randSecret = secrets[Math.floor(Math.random() * secrets.length)];
+      mainMessageDiv.innerHTML = `🤍 ${randSecret} 🤍`;
+      addCompliment(`🤍 ${randSecret} 🤍`);
+      createMiniConfetti();
+      heartClicks++;
+      heartNumberSpan.innerText = heartClicks;
+      showFloatingTip("💗 +1 сердечко за секрет 💗");
+      for(let i=0;i<8;i++) setTimeout(()=> createMiniConfetti(), i*30);
+    });
+  }
+
+  function initBackgroundHearts() {
+    const container = document.getElementById('heartsContainer');
+    const heartsList = ['❤️', '💖', '💗', '💓', '💕', '🌸', '🩷'];
+    for (let i = 0; i < 26; i++) {
+      const heart = document.createElement('div');
+      heart.className = 'heart-bg';
+      heart.innerText = heartsList[Math.floor(Math.random() * heartsList.length)];
+      heart.style.left = Math.random() * 100 + '%';
+      heart.style.fontSize = 1 + Math.random() * 2.2 + 'rem';
+      heart.style.animationDuration = 7 + Math.random() * 14 + 's';
+      heart.style.animationDelay = Math.random() * 12 + 's';
+      heart.style.opacity = 0.2 + Math.random() * 0.35;
+      container.appendChild(heart);
+    }
+  }
+
+  function setWelcomeMessage() {
+    const welcomeText = "я просто сидел и подумал: а почему бы не сделать что-то милое для тебя? надеюсь, тебе будет приятно 🥺💕";
+    mainMessageDiv.innerHTML = welcomeText;
+    addCompliment("💖 первое сообщение от меня! просто чтобы ты знала, что ты классная 💖");
+  }
+
+  // адаптивный текст для узких экранов
+  const adjustText = () => {
+    const labelSpan = heartZone.querySelector('.heart-label');
+    if (window.innerWidth <= 450) {
+      if (labelSpan && labelSpan.innerText !== 'нажми ❤️') labelSpan.innerText = 'нажми ❤️';
+    } else {
+      if (labelSpan && labelSpan.innerText === 'нажми ❤️') labelSpan.innerText = 'нажми, если хочешь получить ещё немного тепла';
+    }
+  };
+
+  // Универсальное назначение обработчиков с поддержкой touchstart + mouse (для надежности в WebView)
+  function attachEvent(el, eventType, handler) {
+    if (!el) return;
+    if (eventType === 'tap') {
+      // эмуляция tap: сначала touchstart, предотвращаем клик, но для совместимости добавим и click
+      let touchMoved = false;
+      const onTouchStart = (e) => {
+        touchMoved = false;
+        e.preventDefault();  // предотвращаем масштабирование/скролл при касании кнопок, но не мешает карточке
+        handler(e);
+      };
+      const onTouchMove = () => { touchMoved = true; };
+      const onTouchEnd = (e) => {
+        if (!touchMoved) {
+          // handler уже сработал в touchstart для мгновенности, но дубль не страшен из-за safeExecute
+        }
+      };
+      el.addEventListener('touchstart', onTouchStart, { passive: false });
+      el.addEventListener('touchmove', onTouchMove);
+      el.addEventListener('touchend', onTouchEnd);
+      // также оставляем click для мыши, но оборачиваем, чтобы не дублировать
+      el.addEventListener('click', (e) => {
+        if (touchDebounce) return;
+        handler(e);
+      });
+    } else {
+      el.addEventListener(eventType, handler);
+    }
+  }
+
+  // Инициализация обработчиков с "tap" для всех интерактивных элементов
+  function initTouchHandlers() {
+    attachEvent(warmBtn, 'tap', showWarmMessage);
+    attachEvent(surpriseBtn, 'tap', showSurprise);
+    attachEvent(heartZone, 'tap', onHeartClick);
+    // для аватарки: двойной тап сложновато на телефоне, но оставим как есть плюс длинный тап? сделаем обычный тап секретом + одиночный эффект
+    // чтобы не переопределять, используем обычный тап для секрета (как в изначальной логике был dblclick, но в телефоне это неудобно)
+    // поэтому сделаем: один тап по аватарке даёт секрет (убираем dblclick, только tap)
+    attachEvent(avatar, 'tap', avatarSecret);
+    // закрытие модалки
+    closeFlowersBtn.addEventListener('click', closeFlowerModal);
+    flowersModal.addEventListener('click', (e) => {
+      if(e.target === flowersModal) closeFlowerModal();
+    });
+  }
+
+  // дополнительный эффект для наглядной обратной связи на кнопки (уже есть :active в CSS)
+  initBackgroundHearts();
+  setWelcomeMessage();
+  adjustText();
+  initTouchHandlers();
+  window.addEventListener('resize', adjustText);
+  
+  // форсируем пересчет после загрузки
+  setTimeout(() => adjustText(), 100);
+  console.log('💖 страничка для катёны готова (адаптирована под Telegram iOS)');
+</script>
+</body>
+</html>
